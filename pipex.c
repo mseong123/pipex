@@ -6,35 +6,35 @@
 /*   By: melee <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 18:04:46 by melee             #+#    #+#             */
-/*   Updated: 2023/06/02 14:17:45 by melee            ###   ########.fr       */
+/*   Updated: 2023/06/02 17:45:03 by melee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-extern char **environ;
+extern char	**environ;
 extern int	errno;
 
 /*memory need to be free
  * bin_path
  * */
 
-char **get_bin_path(void)
+char	**get_bin_path(void)
 {
-	char *key;
+	char	*key;
 
 	while (*environ)
 	{
 		key = ft_strnstr(*environ, "PATH=", ft_strlen(*environ));
 		if (key)
-			break;
+			break ;
 		environ++;
 	}
 	key = key + 5;
 	return (ft_split(key, ':'));
 }
 
-void free_splits(char **str)
+void	free_splits(char **str)
 {
 	int	i;
 
@@ -47,10 +47,10 @@ void free_splits(char **str)
 	free(str);
 }
 
-char *append_slash(char *path, char *input)
+char	*append_slash(char *path, char *input)
 {
-	char *res;
-	char *temp;
+	char	*res;
+	char	*temp;
 
 	temp = ft_strjoin(path, "/");
 	res = ft_strjoin(temp, input);
@@ -58,13 +58,13 @@ char *append_slash(char *path, char *input)
 	return (res);
 }
 
-void free_and_null(char **prog_path, int i)
+void	free_and_null(char **prog_path, int i)
 {
 	free(prog_path[i - 2]);
-	prog_path[i-2] = NULL;
+	prog_path[i - 2] = NULL;
 }
 
-char **check_null(char **prog_path, int i)
+char	**check_null(char **prog_path, int i)
 {
 	if (prog_path[i - 2] == NULL)
 	{
@@ -75,12 +75,12 @@ char **check_null(char **prog_path, int i)
 		return (prog_path);
 }
 
-char **check_prog(char **prog_path, int argc, char **argv)
+char	**check_prog(char **prog_path, int argc, char **argv)
 {
-	char **bin_path;
-	char **prog_input;
-	int i;
-	int j;
+	char	**bin_path;
+	char	**prog_input;
+	int		i;
+	int		j;
 
 	i = 2;
 	bin_path = get_bin_path();
@@ -92,7 +92,7 @@ char **check_prog(char **prog_path, int argc, char **argv)
 		{
 			prog_path[i - 2] = append_slash(bin_path[j], prog_input[0]);
 			if (access(prog_path[i - 2], X_OK | F_OK) == 0)
-				break;
+				break ;
 			free_and_null(prog_path, i);
 		}
 		if (!check_null(prog_path, i))
@@ -101,7 +101,7 @@ char **check_prog(char **prog_path, int argc, char **argv)
 		i++;
 	}
 	prog_path[i] = NULL;
-	return(prog_path);
+	return (prog_path);
 }
 
 //check_file checks for first file arg and return fd
@@ -109,7 +109,7 @@ char **check_prog(char **prog_path, int argc, char **argv)
 
 int	check_file(char **argv)
 {
-	int file1_fd;
+	int	file1_fd;
 
 	file1_fd = open(argv[1], O_RDONLY);
 	if (file1_fd == -1)
@@ -120,16 +120,59 @@ int	check_file(char **argv)
 	return (file1_fd);
 }
 
-
-int main(int argc, char **argv)
+void	init_pipefd(int pipefd[][2], int argc)
 {
-	
+	int	i;
+
+	i = 0;
+	while (i < argc - 2)
+	{
+		pipe(pipefd[i]);
+		i++;
+	}
+}	
+
+void close_all_pipefd(int pipefd[][2], int argc, int parent)
+{
+	int	i;
+
+	i = 0;
+	while (i < argc - 3)
+	{
+		close(pipefd[i][0]);
+		close(pipefd[i][1]);
+		i++;
+	}
+	close(pipefd[i][1]);
+	if (!parent)
+		close(pipefd[i][0]);
+		
+}
+
+void read_into_first_pipe(int fd, int pipe[][2])
+{
+	char	*line;
+
+	line = get_next_line(fd);
+	while (line)
+	{
+		write(pipe[0][1], line, ft_strlen(line));
+		free(line);
+		line = get_next_line(fd);
+	}
+	free(line);
+}
+
+int	main(int argc, char **argv)
+{	
 	int	file1_fd;
 	char **prog_path;
 	int i;
-	//int pipefd[argc-2][2];
+	int pipefd[argc-2][2];
+	int pid[argc-3];
+	char **str;
+	char *res;
 
-	i = 0;
 	if (argc >= 5)
 	{
 		file1_fd = check_file(argv);
@@ -139,14 +182,31 @@ int main(int argc, char **argv)
 		prog_path = check_prog(prog_path, argc, argv);
 		if (prog_path == NULL)
 			return (0);
-		while(*prog_path)
+		init_pipefd(pipefd, argc);
+		read_into_first_pipe(file1_fd, pipefd);
+		i = 0;
+		while (i < argc - 3)
 		{
-			printf("%s\n",*prog_path);
-			prog_path++;	
+			pid[i] = fork();
+			if (pid[i] == 0)
+			{
+				dup2(pipefd[i][0], 0);
+				dup2(pipefd[i+1][1], 1);
+				close_all_pipefd(pipefd, argc, 0);
+				str = ft_split(argv[i+2],' ');
+				execve(prog_path[i], str, NULL);
+			}
+			i++;
 		}
+		close_all_pipefd(pipefd, argc, 1);
+		waitpid(pid[1], NULL, 0);
+		res=get_next_line(pipefd[argc-3][0]);
+		printf("result %s\n", res);
+		
 		
 
-	}	
+	}
+
 /*
 	if (argc>1)
 	{
