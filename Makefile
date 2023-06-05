@@ -1,4 +1,4 @@
-SRCS_NAME = pipex
+SRCS_NAME = pipex pipex_utils init init_utils free
 
 SRCS = $(SRCS_NAME:=.c)
 
