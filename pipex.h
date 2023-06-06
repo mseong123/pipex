@@ -6,7 +6,7 @@
 /*   By: melee <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 18:05:34 by melee             #+#    #+#             */
-/*   Updated: 2023/06/06 09:04:50 by melee            ###   ########.fr       */
+/*   Updated: 2023/06/06 10:45:34 by melee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 typedef struct s_pipex
 {
 	int		cmd_count;
+	int		cmd_pos_start;
 	int		file1_fd;
 	int		file2_fd;
 	char	**bin_path;
@@ -39,5 +40,6 @@ int		**init_pipefd(t_pipex *ptr);
 void	close_all_pipefd(t_pipex *ptr, int parent);
 void	read_into_first_pipe(t_pipex *ptr);
 void	read_from_last_pipe(t_pipex *ptr);
+void	here_doc_into_pipe(t_pipex *ptr, char **argv);
 
 #endif

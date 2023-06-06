@@ -6,7 +6,7 @@
 /*   By: melee <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 12:39:41 by melee             #+#    #+#             */
-/*   Updated: 2023/06/06 09:00:06 by melee            ###   ########.fr       */
+/*   Updated: 2023/06/06 11:42:32 by melee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	check_cmd_null(t_pipex *ptr, char **argv)
 		if (ptr->cmd_path[i] == NULL)
 		{
 			ft_putstr_fd("pipex: command not found: ", 2);
-			ft_putstr_fd(argv[i + 2], 2);
+			ft_putstr_fd(argv[i + ptr->cmd_pos_start], 2);
 			ft_putchar_fd('\n', 2);
 			error = 1;
 		}
@@ -77,7 +77,7 @@ char	**check_cmd(t_pipex *ptr, char **argv)
 	while (i < ptr->cmd_count)
 	{
 		j = 0;
-		cmd_input = ft_split(argv[i + 2], ' ');
+		cmd_input = ft_split(argv[i + (ptr->cmd_pos_start)], ' ');
 		while (ptr->bin_path[j++])
 		{
 			ptr->cmd_path[i] = append_slash(ptr->bin_path[j], cmd_input[0]);

@@ -6,7 +6,7 @@
 /*   By: melee <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 15:26:33 by melee             #+#    #+#             */
-/*   Updated: 2023/06/06 09:07:10 by melee            ###   ########.fr       */
+/*   Updated: 2023/06/06 10:53:36 by melee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,21 @@ void	read_from_last_pipe(t_pipex *ptr)
 		line = get_next_line(ptr->pipefd[ptr->cmd_count][0]);
 	}
 	free(line);
+}
+
+void	here_doc_into_pipe(t_pipex *ptr, char **argv)
+{
+	char	*line;
+	char	*delimiter;
+
+	line = get_next_line(STDIN_FILENO);
+	delimiter = ft_strjoin(argv[2], "\n");
+	while (ft_strcmp(line, delimiter))
+	{
+		write(ptr->pipefd[0][1], line, ft_strlen(line));
+		free(line);
+		line = get_next_line(STDIN_FILENO);
+	}
+	free(line);
+	free(delimiter);
 }
