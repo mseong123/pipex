@@ -6,7 +6,7 @@
 /*   By: melee <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 12:39:41 by melee             #+#    #+#             */
-/*   Updated: 2023/06/05 17:20:58 by melee            ###   ########.fr       */
+/*   Updated: 2023/06/06 09:00:06 by melee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,13 @@ int	check_cmd_null(t_pipex *ptr, char **argv)
 		}
 		i++;
 	}
+	if (error == 1)
+	{
+		i = 0;
+		while (i < ptr->cmd_count)
+			free(ptr->cmd_path[i++]);
+		free(ptr->cmd_path);
+	}
 	return (error);
 }
 
@@ -80,7 +87,7 @@ char	**check_cmd(t_pipex *ptr, char **argv)
 			ptr->cmd_path[i] = NULL;
 		}
 		free_splits(cmd_input);
-			i++;
+		i++;
 	}
 	if (check_cmd_null(ptr, argv))
 		return (NULL);
@@ -90,7 +97,7 @@ char	**check_cmd(t_pipex *ptr, char **argv)
 
 int	**init_pipefd(t_pipex *ptr)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < ptr->cmd_count + 1)
@@ -112,5 +119,3 @@ int	**init_pipefd(t_pipex *ptr)
 	}
 	return (ptr->pipefd);
 }
-
-

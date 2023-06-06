@@ -6,16 +6,16 @@
 /*   By: melee <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 15:26:33 by melee             #+#    #+#             */
-/*   Updated: 2023/06/05 16:58:39 by melee            ###   ########.fr       */
+/*   Updated: 2023/06/06 09:07:10 by melee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void close_all_pipefd(t_pipex *ptr, int parent)
+void	close_all_pipefd(t_pipex *ptr, int parent)
 {
 	int	i;
-	int error;
+	int	error;
 
 	i = 0;
 	error = 0;
@@ -30,12 +30,14 @@ void close_all_pipefd(t_pipex *ptr, int parent)
 	if (close(ptr->pipefd[i][1]) == -1)
 		error = 1;
 	if (!parent)
-		if(close(ptr->pipefd[i][0]) == -1)
-			error = 1;	
+	{
+		if (close(ptr->pipefd[i][0]) == -1)
+			error = 1;
+	}	
 	if (error)
 	{
 		perror("pipex");
-		exit(0);
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -66,5 +68,3 @@ void	read_from_last_pipe(t_pipex *ptr)
 	}
 	free(line);
 }
-
-

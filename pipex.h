@@ -6,7 +6,7 @@
 /*   By: melee <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 18:05:34 by melee             #+#    #+#             */
-/*   Updated: 2023/06/05 16:57:52 by melee            ###   ########.fr       */
+/*   Updated: 2023/06/06 09:04:50 by melee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@
 
 typedef struct s_pipex
 {
-	int cmd_count;
-	int	file1_fd;
-	int	file2_fd;
-	char **bin_path;
-	char **cmd_path;
-	int	**pipefd;
-	int	*pid;
+	int		cmd_count;
+	int		file1_fd;
+	int		file2_fd;
+	char	**bin_path;
+	char	**cmd_path;
+	int		**pipefd;
+	int		*pid;
 }	t_pipex;
 
 t_pipex	*init(t_pipex *ptr, int argc, char **argv, char **envp);
