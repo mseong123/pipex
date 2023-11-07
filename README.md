@@ -32,4 +32,26 @@ $> cmd1 << LIMITER | cmd2 >> file2
 
 $> ./pipex here_doc LIMITER cmd1 cmd2 file2
 ```
+## Status
 
+Validated 6/6/2023. Grade: 125%. Project duration: 1 weeks.
+
+## Clone
+
+Clone the repository:
+
+```
+git clone https://github.com/mseong123/pipex.git
+```
+
+## Compile and Run
+
+The program is split into a mandatory part and a bonus part. Both can be compiled and run using the following command.
+
+```shell
+make
+```
+
+To run the program:
+
+Run the program as per description of mandatory and bonus above.
