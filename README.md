@@ -9,8 +9,8 @@ The purpose of this project is the discovery in detail UNIX mechanism - pipe and
 
 [`Subject PDF`](https://github.com/mseong123/pipex/blob/5510e00e0aabfb577879685b5f32a7b565e04e99/en.subject.pdf) link.
 
-### Discription of mandatory part
-The program `pipex` should repeat the behaviour of the next shell command
+### Description of mandatory part
+The program `pipex` should repeat the behaviour of the following shell command
 ```bash
 $> < file1 cmd1 | cmd2 > file2
 ```
@@ -19,7 +19,7 @@ and looks like this:
 $> ./pipex file1 cmd1 cmd2 file2
 ```
 All errors like: wrong commands,  permission to files and etc, need be handle.
-### Discription of bonus part
+### Description of bonus part
 Program need handle multiple pipes
 ```bash
 $> < file1 cmd1 | cmd2 | cmd3 | ... | cmdn > file2
